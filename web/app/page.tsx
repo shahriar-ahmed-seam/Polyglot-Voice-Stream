@@ -49,8 +49,8 @@ export default function Home() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <div className="topbar-inner">
+      <section className="hero">
+        <nav className="nav container">
           <div className="brand">
             <span className="brand-mark" />
             Polyglot Voice Stream
@@ -59,25 +59,24 @@ export default function Home() {
             <span className={`status-dot ${dotClass}`} />
             {STATUS_LABEL[status]}
           </div>
-        </div>
-      </header>
+        </nav>
 
-      <section className="hero">
-        <div className="hero-inner">
-          <span className="eyebrow">Real-time AI interpreter</span>
+        <div className="hero-body container">
+          <span className="kicker">Real-time AI interpreter</span>
           <h1>
-            Speak once. Be heard in <span className="grad">any language</span>,
-            in your own voice.
+            Speak once.
+            <br />
+            Be heard in <em>any language</em>.
           </h1>
-          <p>
-            Polyglot Voice Stream listens as you talk, translates on the fly, and
-            speaks the result back in a clone of your voice — with end-to-end
-            latency low enough for a real conversation.
+          <p className="lede">
+            Polyglot listens as you talk, translates on the fly, and speaks the
+            result back in a clone of your own voice — fast enough to hold a real
+            conversation across borders.
           </p>
 
-          <div className="controls">
+          <div className="actions">
             <button
-              className={`btn ${live ? "btn-danger" : "btn-primary"}`}
+              className={`btn ${live ? "btn-stop" : "btn-primary"}`}
               onClick={live ? stop : start}
             >
               {live ? "Stop session" : "Start talking"}
@@ -92,13 +91,18 @@ export default function Home() {
         </div>
       </section>
 
-      <main className="content">
-        <h2 className="section-label">Live transcript</h2>
+      <main className="content container">
+        <div className="content-head">
+          <h2>Live transcript</h2>
+          <span className="count">
+            {results.length === 0 ? "Awaiting input" : `${results.length} translated`}
+          </span>
+        </div>
 
         {results.length === 0 ? (
           <div className="empty">
-            Press <strong>Start talking</strong> and say something. Your
-            translations will appear here and play back automatically.
+            Press <strong>Start talking</strong> and say something. Each phrase you
+            speak appears here translated, and plays back in your voice.
           </div>
         ) : (
           <ul className="feed">
@@ -112,6 +116,13 @@ export default function Home() {
           </ul>
         )}
       </main>
+
+      <footer className="footer container">
+        <span>Polyglot Voice Stream</span>
+        <span>
+          {SOURCE_LANG} → {TARGET_LANG}
+        </span>
+      </footer>
     </div>
   );
 }
