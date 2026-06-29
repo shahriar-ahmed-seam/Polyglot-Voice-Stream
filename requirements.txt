@@ -1,0 +1,19 @@
+# --- Core orchestration (all CPU, no GPU needed) ---
+sounddevice==0.4.6        # mic capture + audio playback
+numpy==1.26.4
+python-dotenv==1.0.1
+
+# --- VAD: tiny model, runs on CPU ---
+silero-vad==5.1
+torch==2.3.1              # CPU build is fine: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# --- Cloud inference (the "GPU" lives here) ---
+groq==0.11.0              # STT (whisper-large-v3-turbo) + translation LLM
+elevenlabs==1.8.0         # voice-cloning TTS (optional; comment out if using XTTS)
+
+# --- Optional: local CPU TTS fallback (slow, no API key) ---
+# TTS==0.22.0             # Coqui XTTS-v2 runs on CPU at ~3-6s/sentence
+
+# --- Web backend (WebSocket server for the browser frontend) ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.6   # includes websockets + uvloop where available
