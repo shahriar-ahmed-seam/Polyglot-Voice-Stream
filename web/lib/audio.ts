@@ -1,6 +1,13 @@
 const TARGET_RATE = 16_000;
 
 export type Result = { source: string; target: string; ms: number };
+export type Status =
+  | "idle"
+  | "connecting"
+  | "listening"
+  | "stopped"
+  | "disconnected"
+  | "error";
 
 export class VoiceStream {
   private ctx?: AudioContext;
@@ -9,23 +16,39 @@ export class VoiceStream {
   private stream?: MediaStream;
   private ws?: WebSocket;
   private playHead = 0;
+  private stopping = false;
 
   constructor(
     private wsUrl: string,
     private onResult: (r: Result) => void,
-    private onStatus: (s: string) => void
+    private onStatus: (s: Status) => void
   ) {}
 
   async start() {
+    this.stopping = false;
+    this.onStatus("connecting");
+
     this.ws = new WebSocket(this.wsUrl);
     this.ws.binaryType = "arraybuffer";
-    this.ws.onopen = () => this.onStatus("connected");
-    this.ws.onclose = () => this.onStatus("disconnected");
     this.ws.onerror = () => this.onStatus("error");
+    this.ws.onclose = () => this.onStatus(this.stopping ? "stopped" : "disconnected");
     this.ws.onmessage = (e) => this.onMessage(e);
+    this.ws.onopen = async () => {
+      try {
+        await this.openMic();
+        this.onStatus("listening");
+      } catch {
+        this.onStatus("error");
+        this.stop();
+      }
+    };
+  }
 
+  private async openMic() {
     this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.ctx = new AudioContext();
+    await this.ctx.resume();
+
     this.source = this.ctx.createMediaStreamSource(this.stream);
     this.processor = this.ctx.createScriptProcessor(4096, 1, 1);
 
@@ -37,10 +60,10 @@ export class VoiceStream {
 
     this.source.connect(this.processor);
     this.processor.connect(this.ctx.destination);
-    this.onStatus("listening");
   }
 
   stop() {
+    this.stopping = true;
     this.processor?.disconnect();
     this.source?.disconnect();
     this.stream?.getTracks().forEach((t) => t.stop());
