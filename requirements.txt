@@ -1,21 +1,23 @@
-# --- Core orchestration (all CPU, no GPU needed) ---
-sounddevice==0.4.6        # mic capture + audio playback
+# Audio I/O and orchestration (CPU)
+sounddevice==0.4.6
 numpy==1.26.4
 python-dotenv==1.0.1
 
-# --- VAD: tiny model, runs on CPU ---
+# Voice activity detection. Install torch/torchaudio from the CPU wheel index:
+#   pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+# The default PyPI torchaudio is CUDA-enabled and fails on CPU-only hosts.
 silero-vad==5.1
-torch==2.3.1              # CPU build is fine: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
-torchaudio==2.3.1        # required by silero-vad; install the CPU wheel to avoid CUDA deps
+torch==2.3.1
+torchaudio==2.3.1
 
-# --- Cloud inference (the "GPU" lives here) ---
-groq==0.11.0              # STT (whisper-large-v3-turbo) + translation LLM
-elevenlabs==1.8.0         # voice-cloning TTS (optional; comment out if using XTTS)
-httpx==0.27.2             # pin: groq/elevenlabs pass proxies= which httpx>=0.28 removed
+# Inference APIs
+groq==0.11.0
+elevenlabs==1.8.0
+httpx==0.27.2              # groq/elevenlabs pass proxies=, removed in httpx>=0.28
 
-# --- Optional: local CPU TTS fallback (slow, no API key) ---
-# TTS==0.22.0             # Coqui XTTS-v2 runs on CPU at ~3-6s/sentence
+# Local CPU TTS (optional; enable with TTS_BACKEND=xtts)
+# TTS==0.22.0
 
-# --- Web backend (WebSocket server for the browser frontend) ---
+# Web backend
 fastapi==0.115.0
-uvicorn[standard]==0.30.6   # includes websockets + uvloop where available
+uvicorn[standard]==0.30.6
