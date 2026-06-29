@@ -5,7 +5,8 @@ python-dotenv==1.0.1
 
 # --- VAD: tiny model, runs on CPU ---
 silero-vad==5.1
-torch==2.3.1              # CPU build is fine: pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch==2.3.1              # CPU build is fine: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+torchaudio==2.3.1        # required by silero-vad; install the CPU wheel to avoid CUDA deps
 
 # --- Cloud inference (the "GPU" lives here) ---
 groq==0.11.0              # STT (whisper-large-v3-turbo) + translation LLM

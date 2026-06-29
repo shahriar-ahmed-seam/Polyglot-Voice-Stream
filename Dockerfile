@@ -3,8 +3,9 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# CPU-only torch keeps the image small (no CUDA).
-RUN pip install --no-cache-dir torch==2.3.1 \
+# CPU-only torch + torchaudio (silero-vad needs torchaudio; the default PyPI
+# build is CUDA-enabled and fails on CPU hosts with a missing libcudart).
+RUN pip install --no-cache-dir torch==2.3.1 torchaudio==2.3.1 \
     --index-url https://download.pytorch.org/whl/cpu
 
 COPY requirements.txt .
