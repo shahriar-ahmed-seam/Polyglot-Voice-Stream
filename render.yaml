@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: polyglot-voice-stream
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_ID
+        sync: false
+      - key: SOURCE_LANG
+        value: en
+      - key: TARGET_LANG
+        value: es
+      - key: TTS_BACKEND
+        value: elevenlabs
